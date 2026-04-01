@@ -10,9 +10,10 @@ COPY prisma ./prisma/
 COPY prisma.config.ts ./
 RUN npm ci
 
-# Build
+# Build - use dummy DATABASE_URL so Next.js page collection doesn't fail
 COPY . .
 RUN npx prisma generate
+ENV DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy"
 RUN npm run build
 
 # Production
