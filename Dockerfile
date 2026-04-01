@@ -13,7 +13,6 @@ RUN npm ci
 # Build
 COPY . .
 RUN npx prisma generate
-RUN npx prisma db push --skip-generate
 RUN npm run build
 
 # Production
@@ -24,10 +23,17 @@ WORKDIR /app
 ENV NODE_ENV=production
 ENV PORT=3000
 
+# Copy standalone build
 COPY --from=base /app/.next/standalone ./
 COPY --from=base /app/.next/static ./.next/static
 COPY --from=base /app/public ./public
 
+# Copy prisma for db push at startup
+COPY --from=base /app/node_modules ./node_modules
+COPY --from=base /app/prisma ./prisma
+COPY --from=base /app/prisma.config.ts ./prisma.config.ts
+COPY --from=base /app/package.json ./package.json
+
 EXPOSE 3000
 
-CMD ["node", "server.js"]
+CMD ["sh", "-c", "npx prisma db push --skip-generate && node server.js"]
