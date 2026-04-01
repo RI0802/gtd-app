@@ -3,6 +3,8 @@ import webpush from "web-push";
 import { requireAuth } from "@/lib/auth-guard";
 import { prisma } from "@/lib/prisma";
 
+export const dynamic = "force-dynamic";
+
 if (
   process.env.VAPID_EMAIL &&
   process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY &&

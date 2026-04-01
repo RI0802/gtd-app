@@ -3,6 +3,8 @@ import { NextResponse } from "next/server";
 
 import { prisma } from "@/lib/prisma";
 
+export const dynamic = "force-dynamic";
+
 const DEFAULT_CONTEXTS = [
   { name: "@home", icon: "🏠", color: "#3B82F6" },
   { name: "@work", icon: "💼", color: "#10B981" },
