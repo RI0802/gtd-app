@@ -1,0 +1,18 @@
+{
+  "name": "GTD App - Getting Things Done",
+  "short_name": "GTD",
+  "description": "GTDメソッドに最適化されたタスク管理アプリ",
+  "start_url": "/inbox",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1e40af",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

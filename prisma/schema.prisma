@@ -1,0 +1,110 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id               String   @id @default(cuid())
+  email            String   @unique
+  name             String?
+  passwordHash     String   @map("password_hash")
+  googleTokens     String?  @map("google_tokens")
+  pushSubscription String?  @map("push_subscription")
+  reviewDay        Int      @default(5)
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  items    Item[]
+  projects Project[]
+  contexts Context[]
+  reviews  Review[]
+
+  @@map("users")
+}
+
+model Item {
+  id            String    @id @default(cuid())
+  userId        String    @map("user_id")
+  title         String
+  notes         String?
+  type          String    @default("inbox")
+  energy        String?
+  timeEstimate  Int?      @map("time_estimate")
+  dueDate       DateTime? @map("due_date")
+  scheduledDate DateTime? @map("scheduled_date")
+  completedAt   DateTime? @map("completed_at")
+  delegatedTo   String?   @map("delegated_to")
+  sortOrder     Int       @default(0) @map("sort_order")
+  gcalEventId   String?   @map("gcal_event_id")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  project   Project?      @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  projectId String?       @map("project_id")
+  contexts  ItemContext[]
+
+  @@index([userId, type])
+  @@index([userId, projectId])
+  @@map("items")
+}
+
+model Project {
+  id          String    @id @default(cuid())
+  userId      String    @map("user_id")
+  name        String
+  description String?
+  status      String    @default("active")
+  dueDate     DateTime? @map("due_date")
+  sortOrder   Int       @default(0) @map("sort_order")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  user  User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items Item[]
+
+  @@index([userId, status])
+  @@map("projects")
+}
+
+model Context {
+  id        String @id @default(cuid())
+  userId    String @map("user_id")
+  name      String
+  icon      String?
+  color     String @default("#6B7280")
+  sortOrder Int    @default(0) @map("sort_order")
+
+  user  User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items ItemContext[]
+
+  @@unique([userId, name])
+  @@map("contexts")
+}
+
+model ItemContext {
+  itemId    String @map("item_id")
+  contextId String @map("context_id")
+
+  item    Item    @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  context Context @relation(fields: [contextId], references: [id], onDelete: Cascade)
+
+  @@id([itemId, contextId])
+  @@map("item_contexts")
+}
+
+model Review {
+  id          String   @id @default(cuid())
+  userId      String   @map("user_id")
+  completedAt DateTime @default(now()) @map("completed_at")
+  notes       String?
+  summary     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("reviews")
+}
