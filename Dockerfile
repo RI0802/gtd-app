@@ -34,4 +34,4 @@ COPY --from=base /app/package.json ./package.json
 
 EXPOSE 3000
 
-CMD ["sh", "-c", "npx prisma db push --skip-generate && node server.js"]
+CMD ["sh", "-c", "npx prisma db push && node server.js"]
